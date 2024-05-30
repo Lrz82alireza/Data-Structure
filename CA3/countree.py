@@ -12,10 +12,10 @@ def count_mistakes(cities, i, max_num, last_LEFT = None, last_RIGHT = None):
         if cities[i][0] < l_value[0]:
             # print("manam l_1", i)
             mistakes += 1
-        if last_RIGHT != None and l_value[0] < last_RIGHT:
+        elif last_RIGHT != None and l_value[0] < last_RIGHT:
             # print("manam l_2", i)
             mistakes += 1
-        if len(l_value) == 3:
+        elif len(l_value) == 3:
             mistakes += count_mistakes(cities, l_index, max_num, cities[i][0], last_RIGHT)
             # print("biroon", i)
 
@@ -27,10 +27,10 @@ def count_mistakes(cities, i, max_num, last_LEFT = None, last_RIGHT = None):
         if cities[i][0] > r_value[0]:
             # print("manam r_1", i)
             mistakes += 1
-        if last_LEFT != None and r_value[0] > last_LEFT:
+        elif last_LEFT != None and r_value[0] > last_LEFT:
             # print("manam r_2", i)
             mistakes += 1
-        if len(r_value) == 3:
+        elif len(r_value) == 3:
             mistakes += count_mistakes(cities, r_index, max_num, last_LEFT, cities[i][0])
             # print("biroon", i)
 

@@ -1,56 +1,52 @@
-class Tree:
-    class Node:
-        def __init__(self, value, l = None, r = None):
-            self.value = value
-            self.l = l
-            self.r = r
 
-    def __init__(self):
-        self.root = None
-        pass
+def count_mistakes(cities, i, max_num, last_LEFT = None, last_RIGHT = None):
+    mistakes = 0
+    cities[i].append(i)
+    # print()
+    # print(i, last_LEFT, last_RIGHT, cities[i])
+    # left
+    if cities[i][1] != -1: 
+        l_index = cities[i][1]
+        l_value = cities[l_index]
 
-    def insert(self, value, left, right):
-        if self.root == None:
-            l = Tree.Node(None if left == -1 else left)
-            r = Tree.Node(None if right == -1 else right)
-            self.root = Tree.Node(value, l, r)
-            return
+        if cities[i][0] < l_value[0]:
+            # print("manam l_1", i)
+            mistakes += 1
+        if last_RIGHT != None and l_value[0] < last_RIGHT:
+            # print("manam l_2", i)
+            mistakes += 1
+        if len(l_value) == 3:
+            mistakes += count_mistakes(cities, l_index, max_num, cities[i][0], last_RIGHT)
+            # print("biroon", i)
 
-        temp = self.find(value)
+    # right
+    if cities[i][2] != -1: 
+        r_index = cities[i][2]
+        r_value = cities[r_index]
 
-        if temp == None:
-            self.root = Tree.Node(value, left, right)
+        if cities[i][0] > r_value[0]:
+            # print("manam r_1", i)
+            mistakes += 1
+        if last_LEFT != None and r_value[0] > last_LEFT:
+            # print("manam r_2", i)
+            mistakes += 1
+        if len(r_value) == 3:
+            mistakes += count_mistakes(cities, r_index, max_num, last_LEFT, cities[i][0])
+            # print("biroon", i)
 
-        # cur = self.root
-        # while True:
-        #     if value < cur.value:
-        #         if cur.l == None:
-        #             cur.l = Tree.Node(value, p = cur)
-        #             break
-        #         cur = cur.l
-        #     else:
-        #         if cur.r == None:
-        #             cur.r = Tree.Node(value, p = cur)
-        #             break
-        #         cur = cur.r
-        pass
+    if i < max_num and len(cities[i + 1]) == 3 and last_LEFT == None and last_RIGHT == None:
+        mistakes += count_mistakes(cities, i + 1, max_num)
 
-    def find(self, value):
-        if self.root == None:
-            return None
-        cur = self.root
-        while cur != None:
-            if value < cur.value:
-                cur = cur.l
-            elif value > cur.value:
-                cur = cur.r
-            else:
-                return cur
-        return None
+    return mistakes
 
 n = int(input())
 
-tree = Tree()
+cities = {}
 
 for i in range(n):
-    tree.insert(int(input()))
+    city = [int(x) for x in input().split()]
+    cities[i + 1] = city
+
+count = count_mistakes(cities, 1, n)
+
+print(count)

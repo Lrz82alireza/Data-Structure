@@ -1,52 +1,112 @@
+class Bst:
+    class Node:
+        def __init__(self, value, p = None, l = None, r = None):
+            self.value = value
+            self.l = l
+            self.r = r
+            self.p = p
+        pass
 
-def count_mistakes(cities, i, max_num, last_LEFT = None, last_RIGHT = None):
-    mistakes = 0
-    cities[i].append(i)
-    # print()
-    # print(i, last_LEFT, last_RIGHT, cities[i])
-    # left
-    if cities[i][1] != -1: 
-        l_index = cities[i][1]
-        l_value = cities[l_index]
+    def __init__(self):
+        self.root = None
+        pass
 
-        if cities[i][0] < l_value[0]:
-            # print("manam l_1", i)
-            mistakes += 1
-        if last_RIGHT != None and l_value[0] < last_RIGHT:
-            # print("manam l_2", i)
-            mistakes += 1
-        if len(l_value) == 3:
-            mistakes += count_mistakes(cities, l_index, max_num, cities[i][0], last_RIGHT)
-            # print("biroon", i)
+    def set_root(self, node):
+        if node == None:
+            return None
+        cur = node
+        while True:
+            if cur.p == None:
+                break
+            cur = cur.p
+        pass
+        self.root = cur
 
-    # right
-    if cities[i][2] != -1: 
-        r_index = cities[i][2]
-        r_value = cities[r_index]
+    def find(self, key):
+        if self.root == None:
+            return None
+        
+        result = None
 
-        if cities[i][0] > r_value[0]:
-            # print("manam r_1", i)
-            mistakes += 1
-        if last_LEFT != None and r_value[0] > last_LEFT:
-            # print("manam r_2", i)
-            mistakes += 1
-        if len(r_value) == 3:
-            mistakes += count_mistakes(cities, r_index, max_num, last_LEFT, cities[i][0])
-            # print("biroon", i)
+        cur = self.root
+        while True:
+            if key < cur.value:
+                if cur.l == None:
+                    break
+                cur = cur.l
 
-    if i < max_num and len(cities[i + 1]) == 3 and last_LEFT == None and last_RIGHT == None:
-        mistakes += count_mistakes(cities, i + 1, max_num)
+            elif key > cur.value:
+                if cur.r == None:
+                    break
+                cur = cur.r
+            
+            else:
+                result = cur
+                break
+        return result
 
-    return mistakes
+    def insert(self, key):
+        if self.root == None:
+            self.root = Bst.Node(key)
+            return
+
+        cur = self.root
+        while True:
+            if key < cur.value:
+                if cur.l == None:
+                    cur.l = Bst.Node(key, p = cur)
+                    break
+                cur = cur.l
+            else:
+                if cur.r == None:
+                    cur.r = Bst.Node(key, p = cur)
+                    break
+                cur = cur.r
+        pass
+
+    def inorder(self, root = None, first = True):
+        if first:
+            root = self.root
+            first = False
+            self.inorder_out = ''
+        if root == None:
+            return
+
+        self.inorder(root.l, False)
+        self.inorder_out += str(root.value) + ' '
+        self.inorder(root.r, False)
+
+        return self.inorder_out
+        pass
+
 
 n = int(input())
 
 cities = {}
+city = {}
+bst = Bst()
 
 for i in range(n):
-    city = [int(x) for x in input().split()]
-    cities[i + 1] = city
+    city[i] = [int(x) for x in input().split()]
+    cities[i + 1] = Bst.Node(city[i][0])
 
-count = count_mistakes(cities, 1, n)
+for i in range(n):
+    parent = cities[i + 1]
+    left = city[i][1]
+    right = city[i][2]
+    if left != -1:
+        cities[i + 1].l = cities[left]
+        cities[left].p = parent
+    if right != -1:
+        cities[i + 1].r = cities[right]
+        cities[right].p = parent
 
-print(count)
+bst.set_root(cities[1])
+
+mistakes = 0
+for i in range(n):
+    test = bst.find(city[i][0]) == None
+    if test:
+        mistakes += 1
+print(mistakes)
+

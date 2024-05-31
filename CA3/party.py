@@ -1,15 +1,14 @@
-import sys
-import heapq
-
 class Room:
     def __init__(self):
         self.beds = set()
         self.beds_index = {}
+        self.len_bed = 0
 
     def add_bed(self, args):
         x, y = args
         self.beds.add((x, y))
-        self.beds_index[len(self.beds)] = (x, y)
+        self.len_bed += 1
+        self.beds_index[self.len_bed] = (x, y)
         pass
     
     def remove_bed(self, index):

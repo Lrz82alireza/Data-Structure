@@ -3,24 +3,25 @@ import heapq
 
 class Room:
     def __init__(self):
-        self.beds = []
+        self.beds = set()
+        self.beds_index = {}
 
     def add_bed(self, args):
-        self.beds.append([args[0], args[1]])
+        x, y = args
+        self.beds.add((x, y))
+        self.beds_index[len(self.beds)] = (x, y)
         pass
     
     def remove_bed(self, index):
-        if index > len(self.beds) or index <= 0:
+        if index not in self.beds_index:
             return
-        self.beds.pop(index - 1)
-        pass
+        bed = self.beds_index[index]
+        self.beds.discard(bed)
 
-    def farrest_bed(self, args):
-        max = 0
-        for bed in self.beds:
-            if abs(bed[0] - args[0]) + abs(bed[1] - args[1]) > max:
-                max = abs(bed[0] - args[0]) + abs(bed[1] - args[1])
-        print(max)
+    def farthest_bed(self, args):
+        max_bed = max(self.beds, key=lambda bed: abs(bed[0] - args[0]) + abs(bed[1] - args[1]))
+        max_distance = abs(max_bed[0] - args[0]) + abs(max_bed[1] - args[1])
+        print(max_distance)
         pass
     
     def print_beds(self):
@@ -31,18 +32,18 @@ class Room:
 q = int(input())
 functions = []
 room = Room()
-operations = {'+' : room.add_bed, '-' : room.remove_bed, '?' : room.farrest_bed}
+operations = {'+' : room.add_bed, '-' : room.remove_bed, '?' : room.farthest_bed}
 
 for _ in range(q):
-    functions.append(input().split())
-    if functions[-1][0] == '?' or functions[-1][0] == '+':
-        y = int(functions[-1].pop())
-        x = int(functions[-1].pop())
-        functions[-1].append((x, y))
+    functions = input().split()
+    if functions[0] == '?' or functions[0] == '+':
+        y = int(functions.pop())
+        x = int(functions.pop())
+        functions.append((x, y))
     else:
-        functions[-1][1] = int(functions[-1][1])
+        functions[1] = int(functions[1])
     try:
-        operations[functions[-1][0]](functions[-1][1])
+        operations[functions[0]](functions[1])
     except:
         continue
 
